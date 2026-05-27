@@ -318,9 +318,110 @@
     .weather-temp { font-size: 2.4rem; }
     .pomodoro-display { font-size: 2.6rem; }
   }
+
+  /* ---- Mood Modal ---- */
+  .mood-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+  .mood-overlay.show { opacity: 1; }
+  .mood-overlay.hidden { pointer-events: none; opacity: 0; }
+
+  .mood-box {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 36px 32px;
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    transform: scale(0.9);
+    transition: transform 0.4s;
+  }
+  .mood-overlay.show .mood-box { transform: scale(1); }
+
+  .mood-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 24px;
+  }
+  .mood-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .mood-btn {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 14px;
+    color: var(--text);
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.25s;
+  }
+  .mood-btn:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  /* Result card */
+  .mood-result {
+    display: none;
+  }
+  .mood-result.show {
+    display: block;
+  }
+  .mood-emoji {
+    font-size: 3rem;
+    margin-bottom: 12px;
+  }
+  .mood-text {
+    font-size: 0.95rem;
+    line-height: 1.8;
+    color: var(--text);
+    margin-bottom: 16px;
+  }
+  .mood-sign {
+    font-size: 0.8rem;
+    color: var(--accent);
+    text-align: right;
+  }
 </style>
 </head>
 <body>
+
+<!-- Mood Modal -->
+<div class="mood-overlay" id="mood-overlay">
+  <div class="mood-box">
+    <div id="mood-ask">
+      <div class="mood-title">今天心情怎么样？</div>
+      <div class="mood-options">
+        <button class="mood-btn" onclick="answerMood('happy')">😊 开心</button>
+        <button class="mood-btn" onclick="answerMood('sad')">😔 不开心</button>
+        <button class="mood-btn" onclick="answerMood('meh')">🤔 说不清楚</button>
+      </div>
+    </div>
+    <div class="mood-result" id="mood-result">
+      <div class="mood-emoji" id="mood-emoji"></div>
+      <div class="mood-text" id="mood-text"></div>
+      <div class="mood-sign">—— 灰太羊羊君</div>
+    </div>
+  </div>
+</div>
 
 <div class="bg-blob"></div>
 <div class="bg-blob"></div>
@@ -593,6 +694,44 @@ setInterval(updateClock, 1000);
 setInterval(updateCountdown, 1000);
 setInterval(updateGreeting, 60000);
 setInterval(showQuote, 30000);
+
+// ===== Mood Modal =====
+const moodMessages = {
+  happy: [
+    '开心就对了！能笑着面对每一天，本身就是一种超能力。把这份快乐也分给身边的人吧，世界会因为你更温暖。',
+    '太好了！保持好心情的秘诀就是：别想太多，做就对了。愿你每天都像今天一样闪闪发光。',
+    '真为你高兴！快乐不是因为拥有得多，而是因为计较得少。继续保持这份好心态，好运会一直跟着你。'
+  ],
+  sad: [
+    '不开心也没关系，每个人都有低谷的时候。难过就哭一会儿吧，哭完了记得擦干眼泪，明天又是新的一天。你比自己想象的要坚强得多。',
+    '生活偶尔会下雨，但雨后总会有彩虹。找一件让自己开心的小事去做吧，哪怕只是听一首喜欢的歌，吃一块好吃的蛋糕。',
+    '辛苦了。不开心的时候不用硬撑，允许自己脆弱一会儿。但请记住，所有的不开心都会过去，而你值得一切美好的事物。'
+  ],
+  meh: [
+    '说不清楚也没关系，心情本来就是复杂的。不用急着给自己的情绪下定义，先好好吃顿饭、睡个好觉，答案会慢慢浮出水面的。',
+    '混沌的状态也是一种状态。不用强迫自己非得开心或难过，就这样安安静静地待一会儿也挺好的。给自己一点时间，一切都会慢慢清晰起来。',
+    '嗯，有时候就是这样的。生活大部分时间都是平淡的，而平淡本身就是一种幸福。泡杯茶，看看窗外，享受此刻的宁静吧。'
+  ]
+};
+
+function answerMood(mood) {
+  const msgs = moodMessages[mood];
+  const msg = msgs[Math.floor(Math.random() * msgs.length)];
+  const emoji = mood === 'happy' ? '😊' : mood === 'sad' ? '💙' : '🌿';
+
+  document.getElementById('mood-ask').style.display = 'none';
+  document.getElementById('mood-emoji').textContent = emoji;
+  document.getElementById('mood-text').textContent = msg;
+  document.getElementById('mood-result').classList.add('show');
+
+  setTimeout(() => {
+    document.getElementById('mood-overlay').classList.remove('show');
+    setTimeout(() => document.getElementById('mood-overlay').classList.add('hidden'), 400);
+  }, 4000);
+}
+
+// Show modal on load
+setTimeout(() => document.getElementById('mood-overlay').classList.add('show'), 500);
 </script>
 </body>
 </html>
