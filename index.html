@@ -440,10 +440,10 @@ const WMO = {
 
 async function fetchWeather() {
   try {
-    const pos = await new Promise((res, rej) => {
-      navigator.geolocation.getCurrentPosition(res, rej, { timeout: 10000 });
-    });
-    const { latitude: lat, longitude: lon } = pos.coords;
+    // Use IP geolocation — no browser permission needed
+    const geo = await fetch('https://ipapi.co/json/').then(r => r.json());
+    if (!geo.latitude) throw new Error('geo fail');
+    const { latitude: lat, longitude: lon, city } = geo;
 
     const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min&timezone=auto`;
     const res = await fetch(url);
@@ -453,13 +453,13 @@ async function fetchWeather() {
     const [icon, desc] = WMO[c.weather_code] || ['🌡️', '未知'];
     document.getElementById('weather-icon').textContent = icon;
     document.getElementById('weather-temp').textContent = `${Math.round(c.temperature_2m)}°`;
-    document.getElementById('weather-desc').textContent = desc;
+    document.getElementById('weather-desc').textContent = `${city || ''} · ${desc}`;
     document.getElementById('weather-wind').textContent = `🌬️ 风速 ${c.wind_speed_10m} km/h`;
     document.getElementById('weather-humidity').textContent = `💧 湿度 ${c.relative_humidity_2m}%`;
     document.getElementById('weather-feels').textContent = `🌡️ 体感 ${Math.round(c.apparent_temperature)}°`;
     document.getElementById('weather-range').textContent = `🔺 ${Math.round(data.daily.temperature_2m_max[0])}° / 🔻 ${Math.round(data.daily.temperature_2m_min[0])}°`;
   } catch (e) {
-    document.getElementById('weather-desc').textContent = '无法获取天气，请允许定位权限后刷新';
+    document.getElementById('weather-desc').textContent = '天气获取失败，请稍后刷新';
   }
 }
 
