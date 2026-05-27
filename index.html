@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Greysheep's Hub</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg-1: #0f0c29;
+    --bg-2: #302b63;
+    --bg-3: #24243e;
+    --glass: rgba(255, 255, 255, 0.06);
+    --glass-border: rgba(255, 255, 255, 0.12);
+    --text: #e8e6f0;
+    --text-dim: rgba(255, 255, 255, 0.5);
+    --accent: #7c6ef0;
+    --accent-glow: rgba(124, 110, 240, 0.35);
+  }
+
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--bg-1), var(--bg-2), var(--bg-3));
+    background-attachment: fixed;
+    color: var(--text);
+    overflow-x: hidden;
+  }
+
+  /* animated background blobs */
+  .bg-blob {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: 0.3;
+    pointer-events: none;
+    animation: float 20s ease-in-out infinite;
+  }
+  .bg-blob:nth-child(1) { width: 600px; height: 600px; background: #7c6ef0; top: -10%; left: -10%; }
+  .bg-blob:nth-child(2) { width: 500px; height: 500px; background: #e040a0; bottom: -15%; right: -10%; animation-delay: -7s; }
+  .bg-blob:nth-child(3) { width: 400px; height: 400px; background: #40c0e0; top: 50%; left: 40%; animation-delay: -14s; }
+
+  @keyframes float {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(30px, -40px) scale(1.05); }
+    66% { transform: translate(-20px, 30px) scale(0.95); }
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 20px 60px;
+  }
+
+  /* Header */
+  header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+  header h1 {
+    font-size: 2.4rem;
+    font-weight: 700;
+    letter-spacing: -1px;
+    background: linear-gradient(135deg, #fff, var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+  header p {
+    color: var(--text-dim);
+    font-size: 0.95rem;
+    font-weight: 300;
+  }
+
+  /* Grid */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+  }
+
+  /* Card base */
+  .card {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 28px;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    transition: transform 0.3s, box-shadow 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+  }
+  .card-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-dim);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .card-label .dot {
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    display: inline-block;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  /* ---- Clock ---- */
+  .clock-time {
+    font-size: 3.6rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.1;
+  }
+  .clock-seconds {
+    font-size: 1.4rem;
+    font-weight: 300;
+    color: var(--accent);
+    margin-left: 4px;
+    vertical-align: top;
+  }
+  .clock-date {
+    font-size: 1rem;
+    color: var(--text-dim);
+    margin-top: 8px;
+  }
+  .clock-weekday {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    margin-top: 2px;
+  }
+
+  /* ---- Weather ---- */
+  .weather-main {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 12px;
+  }
+  .weather-icon {
+    font-size: 3.2rem;
+    line-height: 1;
+  }
+  .weather-temp {
+    font-size: 3rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+  .weather-desc {
+    font-size: 0.95rem;
+    color: var(--text-dim);
+    margin-bottom: 12px;
+  }
+  .weather-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    font-size: 0.82rem;
+    color: var(--text-dim);
+  }
+  .weather-details span { display: flex; align-items: center; gap: 4px; }
+
+  /* ---- Quote ---- */
+  .quote-text {
+    font-size: 1.05rem;
+    font-weight: 400;
+    line-height: 1.7;
+    font-style: italic;
+    margin-bottom: 12px;
+    min-height: 60px;
+  }
+  .quote-author {
+    font-size: 0.82rem;
+    color: var(--accent);
+    text-align: right;
+  }
+
+  /* ---- Countdown ---- */
+  .countdown-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .countdown-unit {
+    flex: 1;
+    text-align: center;
+    background: rgba(255,255,255,0.04);
+    border-radius: 12px;
+    padding: 12px 4px;
+  }
+  .countdown-num {
+    font-size: 1.8rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+  .countdown-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-dim);
+    margin-top: 2px;
+  }
+  .countdown-inputs {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .countdown-inputs input {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    padding: 8px 10px;
+    color: var(--text);
+    font-size: 0.82rem;
+    outline: none;
+    width: 100%;
+  }
+  .countdown-inputs input::placeholder { color: var(--text-dim); }
+  .countdown-inputs input:focus { border-color: var(--accent); }
+  .countdown-inputs button {
+    background: var(--accent);
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    color: #fff;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: opacity 0.2s;
+  }
+  .countdown-inputs button:hover { opacity: 0.85; }
+  .countdown-event {
+    font-size: 0.8rem;
+    color: var(--accent);
+    margin-top: 8px;
+    min-height: 20px;
+  }
+
+  /* ---- Pomodoro ---- */
+  .pomodoro-display {
+    font-size: 3.2rem;
+    font-weight: 700;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    margin-bottom: 16px;
+  }
+  .pomodoro-controls {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .pomodoro-controls button {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--glass-border);
+    border-radius: 10px;
+    padding: 10px 20px;
+    color: var(--text);
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .pomodoro-controls button:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  .pomodoro-controls button.active {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  .pomodoro-progress {
+    margin-top: 14px;
+    height: 4px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .pomodoro-progress-bar {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 4px;
+    transition: width 1s linear;
+  }
+
+  /* span 2 cols for weather on wide screens */
+  @media (min-width: 660px) {
+    .card.wide { grid-column: span 1; }
+  }
+
+  /* responsive */
+  @media (max-width: 680px) {
+    .container { padding: 24px 14px 40px; }
+    header h1 { font-size: 1.8rem; }
+    .grid { gap: 16px; }
+    .card { padding: 22px; }
+    .clock-time { font-size: 2.6rem; }
+    .weather-temp { font-size: 2.4rem; }
+    .pomodoro-display { font-size: 2.6rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-blob"></div>
+<div class="bg-blob"></div>
+<div class="bg-blob"></div>
+
+<div class="container">
+  <header>
+    <h1>Greysheep's Hub</h1>
+    <p id="greeting"></p>
+  </header>
+
+  <div class="grid">
+    <!-- Clock -->
+    <div class="card" id="clock-card">
+      <div class="card-label"><span class="dot"></span>时钟</div>
+      <div class="clock-time" id="clock-time"></div>
+      <div class="clock-date" id="clock-date"></div>
+      <div class="clock-weekday" id="clock-weekday"></div>
+    </div>
+
+    <!-- Weather -->
+    <div class="card" id="weather-card">
+      <div class="card-label"><span class="dot"></span>天气</div>
+      <div class="weather-main">
+        <div class="weather-icon" id="weather-icon"></div>
+        <div class="weather-temp" id="weather-temp"></div>
+      </div>
+      <div class="weather-desc" id="weather-desc"></div>
+      <div class="weather-details">
+        <span id="weather-wind"></span>
+        <span id="weather-humidity"></span>
+        <span id="weather-feels"></span>
+        <span id="weather-range"></span>
+      </div>
+    </div>
+
+    <!-- Quote -->
+    <div class="card" id="quote-card">
+      <div class="card-label"><span class="dot"></span>每日一句</div>
+      <div class="quote-text" id="quote-text"></div>
+      <div class="quote-author" id="quote-author"></div>
+    </div>
+
+    <!-- Countdown -->
+    <div class="card" id="countdown-card">
+      <div class="card-label"><span class="dot"></span>倒计时</div>
+      <div class="countdown-row" id="countdown-display">
+        <div class="countdown-unit"><div class="countdown-num" id="cd-days">0</div><div class="countdown-label">天</div></div>
+        <div class="countdown-unit"><div class="countdown-num" id="cd-hours">0</div><div class="countdown-label">时</div></div>
+        <div class="countdown-unit"><div class="countdown-num" id="cd-mins">0</div><div class="countdown-label">分</div></div>
+        <div class="countdown-unit"><div class="countdown-num" id="cd-secs">0</div><div class="countdown-label">秒</div></div>
+      </div>
+      <div class="countdown-inputs">
+        <input type="text" id="cd-event-name" placeholder="事件名称">
+        <input type="date" id="cd-target-date">
+        <button onclick="setCountdown()">设置</button>
+      </div>
+      <div class="countdown-event" id="cd-event-label"></div>
+    </div>
+
+    <!-- Pomodoro -->
+    <div class="card" id="pomodoro-card">
+      <div class="card-label"><span class="dot"></span>番茄钟</div>
+      <div class="pomodoro-display" id="pomodoro-time">25:00</div>
+      <div class="pomodoro-controls">
+        <button onclick="pomodoroAction('start')" id="pomo-start">开始</button>
+        <button onclick="pomodoroAction('pause')">暂停</button>
+        <button onclick="pomodoroAction('reset')">重置</button>
+        <button onclick="pomodoroAction('work')" id="pomo-work" class="active">专注 25m</button>
+        <button onclick="pomodoroAction('short')" id="pomo-short">短休 5m</button>
+        <button onclick="pomodoroAction('long')" id="pomo-long">长休 15m</button>
+      </div>
+      <div class="pomodoro-progress"><div class="pomodoro-progress-bar" id="pomo-bar"></div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== Greeting =====
+function updateGreeting() {
+  const h = new Date().getHours();
+  let g = '晚上好';
+  if (h < 6) g = '夜深了，注意休息';
+  else if (h < 9) g = '早上好，新的一天';
+  else if (h < 12) g = '上午好';
+  else if (h < 14) g = '中午好';
+  else if (h < 18) g = '下午好';
+  document.getElementById('greeting').textContent = g;
+}
+
+// ===== Clock =====
+const weekdays = ['星期日','星期一','星期二','星期三','星期四','星期五','星期六'];
+
+function updateClock() {
+  const now = new Date();
+  const hh = String(now.getHours()).padStart(2, '0');
+  const mm = String(now.getMinutes()).padStart(2, '0');
+  const ss = String(now.getSeconds()).padStart(2, '0');
+  document.getElementById('clock-time').innerHTML = `${hh}:${mm}<span class="clock-seconds">${ss}</span>`;
+
+  const y = now.getFullYear();
+  const mon = String(now.getMonth() + 1).padStart(2, '0');
+  const d = String(now.getDate()).padStart(2, '0');
+  document.getElementById('clock-date').textContent = `${y}年${mon}月${d}日`;
+  document.getElementById('clock-weekday').textContent = weekdays[now.getDay()];
+}
+
+// ===== Weather =====
+const WMO = {
+  0: ['☀️','晴'], 1: ['🌤️','大部晴朗'], 2: ['⛅','多云'], 3: ['☁️','阴天'],
+  45: ['🌫️','雾'], 48: ['🌫️','雾凇'], 51: ['🌦️','小毛毛雨'], 53: ['🌦️','毛毛雨'],
+  55: ['🌧️','大毛毛雨'], 61: ['🌧️','小雨'], 63: ['🌧️','中雨'], 65: ['🌧️','大雨'],
+  71: ['🌨️','小雪'], 73: ['🌨️','中雪'], 75: ['❄️','大雪'],
+  80: ['🌦️','阵雨'], 81: ['🌧️','中阵雨'], 82: ['⛈️','大阵雨'],
+  95: ['⛈️','雷暴'], 96: ['⛈️','雷暴+冰雹'], 99: ['⛈️','雷暴+大冰雹']
+};
+
+async function fetchWeather() {
+  try {
+    const pos = await new Promise((res, rej) => {
+      navigator.geolocation.getCurrentPosition(res, rej, { timeout: 10000 });
+    });
+    const { latitude: lat, longitude: lon } = pos.coords;
+
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min&timezone=auto`;
+    const res = await fetch(url);
+    const data = await res.json();
+    const c = data.current;
+
+    const [icon, desc] = WMO[c.weather_code] || ['🌡️', '未知'];
+    document.getElementById('weather-icon').textContent = icon;
+    document.getElementById('weather-temp').textContent = `${Math.round(c.temperature_2m)}°`;
+    document.getElementById('weather-desc').textContent = desc;
+    document.getElementById('weather-wind').textContent = `🌬️ 风速 ${c.wind_speed_10m} km/h`;
+    document.getElementById('weather-humidity').textContent = `💧 湿度 ${c.relative_humidity_2m}%`;
+    document.getElementById('weather-feels').textContent = `🌡️ 体感 ${Math.round(c.apparent_temperature)}°`;
+    document.getElementById('weather-range').textContent = `🔺 ${Math.round(data.daily.temperature_2m_max[0])}° / 🔻 ${Math.round(data.daily.temperature_2m_min[0])}°`;
+  } catch (e) {
+    document.getElementById('weather-desc').textContent = '无法获取天气，请允许定位权限后刷新';
+  }
+}
+
+// ===== Quote =====
+const quotes = [
+  ['"The only way to do great work is to love what you do."', 'Steve Jobs'],
+  ['"生活不是等待暴风雨过去，而是学会在雨中翩翩起舞。', '未知'],
+  ['"Stay hungry, stay foolish."', 'Stewart Brand'],
+  ['"千里之行，始于足下。"', '老子'],
+  ['"The best time to plant a tree was 20 years ago. The second best time is now."', 'Chinese Proverb'],
+  ['"不是因为看到了希望才坚持，而是因为坚持了才看到希望。"', '未知'],
+  ['"Simplicity is the ultimate sophistication."', 'Leonardo da Vinci'],
+  ['"世界上只有一种真正的英雄主义，那就是认清生活的真相后依然热爱生活。"', '罗曼·罗兰'],
+  ['"Code is like humor. When you have to explain it, it’s bad."', 'Cory House'],
+  ['"先完成，再完美。"', '未知'],
+  ['"The detail is not the detail. It makes the design."', 'Charles Eames'],
+  ['"做你自己，因为别人都有人做了。"', '奥斯卡·王尔德'],
+];
+
+function showQuote() {
+  const i = Math.floor(Math.random() * quotes.length);
+  document.getElementById('quote-text').textContent = quotes[i][0];
+  document.getElementById('quote-author').textContent = '— ' + quotes[i][1];
+}
+
+// ===== Countdown =====
+let countdownTarget = null;
+let countdownEventName = '';
+
+function loadCountdown() {
+  const saved = localStorage.getItem('countdown');
+  if (saved) {
+    const d = JSON.parse(saved);
+    countdownTarget = new Date(d.date);
+    countdownEventName = d.name || '';
+    document.getElementById('cd-event-name').value = d.name || '';
+    document.getElementById('cd-target-date').value = d.date || '';
+    document.getElementById('cd-event-label').textContent = countdownEventName ? `${countdownEventName}` : '';
+  }
+}
+
+function setCountdown() {
+  const name = document.getElementById('cd-event-name').value.trim();
+  const date = document.getElementById('cd-target-date').value;
+  if (!date) return;
+  countdownTarget = new Date(date);
+  countdownEventName = name;
+  localStorage.setItem('countdown', JSON.stringify({ date, name }));
+  document.getElementById('cd-event-label').textContent = name || '';
+}
+
+function updateCountdown() {
+  if (!countdownTarget) return;
+  const diff = countdownTarget - new Date();
+  if (diff <= 0) {
+    document.getElementById('cd-days').textContent = '0';
+    document.getElementById('cd-hours').textContent = '0';
+    document.getElementById('cd-mins').textContent = '0';
+    document.getElementById('cd-secs').textContent = '0';
+    document.getElementById('cd-event-label').textContent = countdownEventName + ' 已到！';
+    return;
+  }
+  const days = Math.floor(diff / 86400000);
+  const hours = Math.floor((diff % 86400000) / 3600000);
+  const mins = Math.floor((diff % 3600000) / 60000);
+  const secs = Math.floor((diff % 60000) / 1000);
+  document.getElementById('cd-days').textContent = days;
+  document.getElementById('cd-hours').textContent = hours;
+  document.getElementById('cd-mins').textContent = mins;
+  document.getElementById('cd-secs').textContent = secs;
+}
+
+// ===== Pomodoro =====
+let pomoState = { mode: 'work', total: 25 * 60, remaining: 25 * 60, running: false, interval: null };
+const pomoModes = { work: 25 * 60, short: 5 * 60, long: 15 * 60 };
+
+function updatePomodoroDisplay() {
+  const m = Math.floor(pomoState.remaining / 60);
+  const s = pomoState.remaining % 60;
+  document.getElementById('pomodoro-time').textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+  const pct = ((pomoState.total - pomoState.remaining) / pomoState.total) * 100;
+  document.getElementById('pomo-bar').style.width = pct + '%';
+}
+
+function pomodoroAction(action) {
+  if (action === 'start') {
+    if (pomoState.running) return;
+    pomoState.running = true;
+    pomoState.interval = setInterval(() => {
+      if (pomoState.remaining > 0) {
+        pomoState.remaining--;
+        updatePomodoroDisplay();
+      } else {
+        clearInterval(pomoState.interval);
+        pomoState.running = false;
+        document.getElementById('pomodoro-time').textContent = '00:00';
+        try { new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVggoKIe2s2OV1zhIh4aTM5X3eIiXhoMzVfdIaJeGg0NV91hol4aDQ1X3WGiXhoNDVfdYaJeGg0NV90hoh3aDQ1X3WGiHdoNDVfdIaId2g0NV90hoh3aDQ1X3SGiHdoNDVfdIaId2g0NV90hoh3aDQ1Xw==').play(); } catch(e) {}
+      }
+    }, 1000);
+  } else if (action === 'pause') {
+    clearInterval(pomoState.interval);
+    pomoState.running = false;
+  } else if (action === 'reset') {
+    clearInterval(pomoState.interval);
+    pomoState.running = false;
+    pomoState.remaining = pomoState.total;
+    updatePomodoroDisplay();
+  } else {
+    // mode switch
+    clearInterval(pomoState.interval);
+    pomoState.running = false;
+    pomoState.mode = action;
+    pomoState.total = pomoModes[action];
+    pomoState.remaining = pomoState.total;
+    document.querySelectorAll('.pomodoro-controls button').forEach(b => b.classList.remove('active'));
+    document.getElementById(`pomo-${action}`).classList.add('active');
+    updatePomodoroDisplay();
+  }
+}
+
+// ===== Init =====
+updateGreeting();
+updateClock();
+showQuote();
+loadCountdown();
+updateCountdown();
+updatePomodoroDisplay();
+fetchWeather();
+
+setInterval(updateClock, 1000);
+setInterval(updateCountdown, 1000);
+setInterval(updateGreeting, 60000);
+setInterval(showQuote, 30000);
+</script>
+</body>
+</html>
