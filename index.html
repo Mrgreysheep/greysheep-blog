@@ -400,6 +400,12 @@
     color: var(--accent);
     text-align: right;
   }
+  .mood-hint {
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    text-align: center;
+    margin-top: 16px;
+  }
 </style>
 </head>
 <body>
@@ -419,6 +425,7 @@
       <div class="mood-emoji" id="mood-emoji"></div>
       <div class="mood-text" id="mood-text"></div>
       <div class="mood-sign">—— 灰太羊羊君</div>
+      <div class="mood-hint">点击任意区域关闭</div>
     </div>
   </div>
 </div>
@@ -731,7 +738,7 @@ function closeMood() {
 }
 
 document.getElementById('mood-overlay').addEventListener('click', (e) => {
-  if (e.target === e.currentTarget) closeMood();
+  if (e.target === e.currentTarget && document.getElementById('mood-result').classList.contains('show')) closeMood();
 });
 
 // Show modal on load
