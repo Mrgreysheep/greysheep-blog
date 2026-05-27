@@ -723,12 +723,16 @@ function answerMood(mood) {
   document.getElementById('mood-emoji').textContent = emoji;
   document.getElementById('mood-text').textContent = msg;
   document.getElementById('mood-result').classList.add('show');
-
-  setTimeout(() => {
-    document.getElementById('mood-overlay').classList.remove('show');
-    setTimeout(() => document.getElementById('mood-overlay').classList.add('hidden'), 400);
-  }, 4000);
 }
+
+function closeMood() {
+  document.getElementById('mood-overlay').classList.remove('show');
+  setTimeout(() => document.getElementById('mood-overlay').classList.add('hidden'), 400);
+}
+
+document.getElementById('mood-overlay').addEventListener('click', (e) => {
+  if (e.target === e.currentTarget) closeMood();
+});
 
 // Show modal on load
 setTimeout(() => document.getElementById('mood-overlay').classList.add('show'), 500);
