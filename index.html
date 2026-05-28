@@ -609,6 +609,55 @@
   .hot-title { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .hot-heat { font-size: 0.7rem; color: var(--text-dim); flex-shrink: 0; }
   .hot-loading { text-align: center; color: var(--text-dim); font-size: 0.82rem; padding: 20px 0; }
+
+  /* ---- Mobile Tab Bar ---- */
+  .tab-bar {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 500;
+    background: rgba(15, 12, 41, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid var(--glass-border);
+    padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
+  }
+  .tab-bar-inner {
+    display: flex;
+    justify-content: space-around;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+  .tab-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 4px 12px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.25s;
+    color: var(--text-dim);
+    font-size: 0.68rem;
+    font-weight: 500;
+    border: none;
+    background: none;
+  }
+  .tab-item.active {
+    color: var(--accent);
+    background: rgba(124, 110, 240, 0.12);
+  }
+  .tab-item .tab-icon { font-size: 1.3rem; }
+
+  @media (max-width: 768px) {
+    .tab-bar { display: block; }
+    .container { padding-bottom: 90px; }
+    .grid { grid-template-columns: 1fr; }
+    .card[data-tab] { display: none; }
+    .card[data-tab].tab-active { display: block; }
+  }
 </style>
 </head>
 <body>
@@ -645,7 +694,7 @@
 
   <div class="grid">
     <!-- Clock -->
-    <div class="card" id="clock-card">
+    <div class="card" id="clock-card" data-tab="home">
       <div class="card-label"><span class="dot"></span>时钟</div>
       <div class="clock-time" id="clock-time"></div>
       <div class="clock-date" id="clock-date"></div>
@@ -653,7 +702,7 @@
     </div>
 
     <!-- Weather -->
-    <div class="card" id="weather-card">
+    <div class="card" id="weather-card" data-tab="home">
       <div class="card-label"><span class="dot"></span>天气</div>
       <div class="weather-main">
         <div class="weather-icon" id="weather-icon"></div>
@@ -669,14 +718,14 @@
     </div>
 
     <!-- Quote -->
-    <div class="card" id="quote-card">
+    <div class="card" id="quote-card" data-tab="discover">
       <div class="card-label"><span class="dot"></span>每日一句</div>
       <div class="quote-text" id="quote-text"></div>
       <div class="quote-author" id="quote-author"></div>
     </div>
 
     <!-- Countdown -->
-    <div class="card" id="countdown-card">
+    <div class="card" id="countdown-card" data-tab="tools">
       <div class="card-label"><span class="dot"></span>倒计时</div>
       <div class="countdown-row" id="countdown-display">
         <div class="countdown-unit"><div class="countdown-num" id="cd-days">0</div><div class="countdown-label">天</div></div>
@@ -693,7 +742,7 @@
     </div>
 
     <!-- Pomodoro -->
-    <div class="card" id="pomodoro-card">
+    <div class="card" id="pomodoro-card" data-tab="tools">
       <div class="card-label"><span class="dot"></span>番茄钟</div>
       <div class="pomodoro-display" id="pomodoro-time">25:00</div>
       <div class="pomodoro-controls">
@@ -708,7 +757,7 @@
     </div>
 
     <!-- Todo -->
-    <div class="card">
+    <div class="card" id="todo-card" data-tab="home">
       <div class="card-label"><span class="dot"></span>待办清单</div>
       <div class="todo-input-row">
         <input type="text" id="todo-input" placeholder="添加新待办..." onkeydown="if(event.key==='Enter')addTodo()">
@@ -718,7 +767,7 @@
     </div>
 
     <!-- Search -->
-    <div class="card">
+    <div class="card" id="search-card" data-tab="tools">
       <div class="card-label"><span class="dot"></span>快捷搜索</div>
       <div class="search-box">
         <input type="text" id="search-input" placeholder="搜索一下..." onkeydown="if(event.key==='Enter')doSearch('baidu')">
@@ -737,7 +786,7 @@
     </div>
 
     <!-- Daily Image -->
-    <div class="card">
+    <div class="card" id="dailyimg-card" data-tab="discover">
       <div class="card-label"><span class="dot"></span>每日一图</div>
       <div class="daily-img-wrapper">
         <img id="daily-img" src="" alt="daily" style="opacity:0" onload="this.style.opacity=1">
@@ -746,10 +795,18 @@
     </div>
 
     <!-- Hot Search -->
-    <div class="card">
+    <div class="card" id="hot-card" data-tab="discover">
       <div class="card-label"><span class="dot"></span>微博热搜</div>
       <div id="hot-content"><div class="hot-loading">加载中...</div></div>
     </div>
+  </div>
+</div>
+
+<div class="tab-bar">
+  <div class="tab-bar-inner">
+    <button class="tab-item" data-tab="home"><span class="tab-icon">🏠</span>常用</button>
+    <button class="tab-item" data-tab="discover"><span class="tab-icon">🔍</span>发现</button>
+    <button class="tab-item" data-tab="tools"><span class="tab-icon">🧰</span>工具</button>
   </div>
 </div>
 
@@ -1081,6 +1138,25 @@ document.getElementById('mood-overlay').addEventListener('click', (e) => {
 
 // Show modal on load
 setTimeout(() => document.getElementById('mood-overlay').classList.add('show'), 500);
+
+// ===== Mobile Tab Bar =====
+function initTabs() {
+  const tabs = document.querySelectorAll('.tab-item');
+  const cards = document.querySelectorAll('.card[data-tab]');
+  if (!tabs.length) return;
+
+  function switchTab(tabName) {
+    tabs.forEach(t => t.classList.toggle('active', t.dataset.tab === tabName));
+    cards.forEach(c => c.classList.toggle('tab-active', c.dataset.tab === tabName));
+  }
+
+  tabs.forEach(t => t.addEventListener('click', () => switchTab(t.dataset.tab)));
+
+  // Default to first tab
+  switchTab('home');
+}
+initTabs();
 </script>
+</body>
 </body>
 </html>
