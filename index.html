@@ -406,6 +406,209 @@
     text-align: center;
     margin-top: 16px;
   }
+
+  /* ---- Todo ---- */
+  .todo-input-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .todo-input-row input {
+    flex: 1;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--glass-border);
+    border-radius: 10px;
+    padding: 10px 14px;
+    color: var(--text);
+    font-size: 0.88rem;
+    outline: none;
+  }
+  .todo-input-row input::placeholder { color: var(--text-dim); }
+  .todo-input-row input:focus { border-color: var(--accent); }
+  .todo-input-row button {
+    background: var(--accent);
+    border: none;
+    border-radius: 10px;
+    padding: 10px 18px;
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .todo-input-row button:hover { opacity: 0.85; }
+  .todo-list { list-style: none; max-height: 220px; overflow-y: auto; }
+  .todo-list::-webkit-scrollbar { width: 4px; }
+  .todo-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
+  .todo-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    font-size: 0.88rem;
+    transition: opacity 0.3s;
+  }
+  .todo-item.done { opacity: 0.4; text-decoration: line-through; }
+  .todo-item .todo-check {
+    width: 20px; height: 20px;
+    border: 2px solid var(--glass-border);
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+  .todo-item.done .todo-check {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  .todo-item .todo-check::after {
+    content: '✓';
+    color: #fff;
+    font-size: 0.7rem;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .todo-item.done .todo-check::after { opacity: 1; }
+  .todo-item .todo-text { flex: 1; }
+  .todo-item .todo-del {
+    color: var(--text-dim);
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: color 0.2s;
+  }
+  .todo-item .todo-del:hover { color: #e04060; }
+  .todo-empty {
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 0.82rem;
+    padding: 20px 0;
+  }
+
+  /* ---- Search ---- */
+  .search-box {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .search-box input {
+    flex: 1;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--glass-border);
+    border-radius: 10px;
+    padding: 10px 14px;
+    color: var(--text);
+    font-size: 0.88rem;
+    outline: none;
+  }
+  .search-box input::placeholder { color: var(--text-dim); }
+  .search-box input:focus { border-color: var(--accent); }
+  .search-box button {
+    background: var(--accent);
+    border: none;
+    border-radius: 10px;
+    padding: 10px 16px;
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.88rem;
+    cursor: pointer;
+  }
+  .search-shortcuts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+  }
+  .search-shortcuts a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+    color: var(--text-dim);
+    font-size: 0.72rem;
+    transition: all 0.2s;
+    width: 60px;
+  }
+  .search-shortcuts a:hover { color: var(--text); transform: translateY(-2px); }
+  .search-shortcuts .sc-icon {
+    width: 40px; height: 40px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    transition: background 0.2s;
+  }
+  .search-shortcuts a:hover .sc-icon { background: rgba(255,255,255,0.12); }
+
+  /* ---- Daily Image ---- */
+  .daily-img-wrapper {
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 12px;
+    max-height: 220px;
+    position: relative;
+    background: rgba(255,255,255,0.04);
+  }
+  .daily-img-wrapper img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    display: block;
+    transition: opacity 0.5s;
+  }
+  .daily-img-credit {
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    text-align: right;
+  }
+
+  /* ---- Hot Search ---- */
+  .hot-list {
+    list-style: none;
+    max-height: 260px;
+    overflow-y: auto;
+  }
+  .hot-list::-webkit-scrollbar { width: 4px; }
+  .hot-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
+  .hot-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+  .hot-item:hover { color: var(--accent); }
+  .hot-rank {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    color: var(--text-dim);
+  }
+  .hot-item:nth-child(1) .hot-rank,
+  .hot-item:nth-child(2) .hot-rank,
+  .hot-item:nth-child(3) .hot-rank {
+    background: var(--accent);
+    color: #fff;
+  }
+  .hot-title { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .hot-heat { font-size: 0.7rem; color: var(--text-dim); flex-shrink: 0; }
+  .hot-loading { text-align: center; color: var(--text-dim); font-size: 0.82rem; padding: 20px 0; }
 </style>
 </head>
 <body>
@@ -502,6 +705,50 @@
         <button onclick="pomodoroAction('long')" id="pomo-long">长休 15m</button>
       </div>
       <div class="pomodoro-progress"><div class="pomodoro-progress-bar" id="pomo-bar"></div></div>
+    </div>
+
+    <!-- Todo -->
+    <div class="card">
+      <div class="card-label"><span class="dot"></span>待办清单</div>
+      <div class="todo-input-row">
+        <input type="text" id="todo-input" placeholder="添加新待办..." onkeydown="if(event.key==='Enter')addTodo()">
+        <button onclick="addTodo()">添加</button>
+      </div>
+      <ul class="todo-list" id="todo-list"></ul>
+    </div>
+
+    <!-- Search -->
+    <div class="card">
+      <div class="card-label"><span class="dot"></span>快捷搜索</div>
+      <div class="search-box">
+        <input type="text" id="search-input" placeholder="搜索一下..." onkeydown="if(event.key==='Enter')doSearch('google')">
+        <button onclick="doSearch('google')">搜索</button>
+      </div>
+      <div class="search-shortcuts">
+        <a href="https://www.google.com" target="_blank"><div class="sc-icon">🔍</div>Google</a>
+        <a href="https://www.bing.com" target="_blank"><div class="sc-icon">🌐</div>Bing</a>
+        <a href="https://www.baidu.com" target="_blank"><div class="sc-icon">📷</div>百度</a>
+        <a href="https://www.zhihu.com" target="_blank"><div class="sc-icon">💡</div>知乎</a>
+        <a href="https://www.bilibili.com" target="_blank"><div class="sc-icon">📺</div>B站</a>
+        <a href="https://github.com" target="_blank"><div class="sc-icon">🐱</div>GitHub</a>
+        <a href="https://www.youtube.com" target="_blank"><div class="sc-icon">▶️</div>YouTube</a>
+        <a href="https://twitter.com" target="_blank"><div class="sc-icon">🐦</div>Twitter</a>
+      </div>
+    </div>
+
+    <!-- Daily Image -->
+    <div class="card">
+      <div class="card-label"><span class="dot"></span>每日一图</div>
+      <div class="daily-img-wrapper">
+        <img id="daily-img" src="" alt="daily" style="opacity:0" onload="this.style.opacity=1">
+      </div>
+      <div class="daily-img-credit" id="daily-img-credit"></div>
+    </div>
+
+    <!-- Hot Search -->
+    <div class="card">
+      <div class="card-label"><span class="dot"></span>微博热搜</div>
+      <div id="hot-content"><div class="hot-loading">加载中...</div></div>
     </div>
   </div>
 </div>
@@ -701,6 +948,99 @@ setInterval(updateClock, 1000);
 setInterval(updateCountdown, 1000);
 setInterval(updateGreeting, 60000);
 setInterval(showQuote, 30000);
+
+// ===== Todo =====
+let todos = JSON.parse(localStorage.getItem('todos') || '[]');
+
+function renderTodos() {
+  const list = document.getElementById('todo-list');
+  if (todos.length === 0) { list.innerHTML = '<div class="todo-empty">暂无待办，添加一个吧 ✨</div>'; return; }
+  list.innerHTML = todos.map((t, i) => `
+    <li class="todo-item ${t.done ? 'done' : ''}">
+      <div class="todo-check" onclick="toggleTodo(${i})"></div>
+      <span class="todo-text">${escHtml(t.text)}</span>
+      <span class="todo-del" onclick="delTodo(${i})">✕</span>
+    </li>
+  `).join('');
+}
+
+function addTodo() {
+  const input = document.getElementById('todo-input');
+  const text = input.value.trim();
+  if (!text) return;
+  todos.unshift({ text, done: false });
+  input.value = '';
+  saveTodos();
+  renderTodos();
+}
+
+function toggleTodo(i) { todos[i].done = !todos[i].done; saveTodos(); renderTodos(); }
+function delTodo(i) { todos.splice(i, 1); saveTodos(); renderTodos(); }
+function saveTodos() { localStorage.setItem('todos', JSON.stringify(todos)); }
+function escHtml(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+renderTodos();
+
+// ===== Search =====
+const searchEngines = {
+  google: 'https://www.google.com/search?q=',
+  bing: 'https://www.bing.com/search?q=',
+  baidu: 'https://www.baidu.com/s?wd=',
+  zhihu: 'https://www.zhihu.com/search?type=content&q=',
+  bilibili: 'https://search.bilibili.com/all?keyword='
+};
+
+function doSearch(engine) {
+  const q = document.getElementById('search-input').value.trim();
+  if (!q) return;
+  window.open(searchEngines[engine] + encodeURIComponent(q), '_blank');
+}
+
+// ===== Daily Image =====
+function loadDailyImage() {
+  const img = document.getElementById('daily-img');
+  const credit = document.getElementById('daily-img-credit');
+  // Use a seed based on the date so the same day shows the same image
+  const today = new Date().toISOString().slice(0, 10);
+  img.src = `https://picsum.photos/seed/${today}/600/300`;
+  credit.textContent = 'Photo by Unsplash / Picsum';
+}
+loadDailyImage();
+
+// ===== Hot Search =====
+async function loadHotSearch() {
+  const container = document.getElementById('hot-content');
+  try {
+    // Use a CORS proxy to fetch Weibo hot search
+    const res = await fetch('https://tenapi.cn/v2/weibohot');
+    const data = await res.json();
+    if (data.code !== 200 || !data.data) throw new Error('api fail');
+    container.innerHTML = '<ul class="hot-list">' + data.data.slice(0, 15).map((item, i) => `
+      <li class="hot-item" onclick="window.open('${escAttr(item.url || 'https://s.weibo.com')}','_blank')">
+        <span class="hot-rank">${i + 1}</span>
+        <span class="hot-title">${escHtml(item.name || item.title || '')}</span>
+        <span class="hot-heat">${item.hot || ''}</span>
+      </li>
+    `).join('') + '</ul>';
+  } catch (e) {
+    // Fallback: try another API
+    try {
+      const res2 = await fetch('https://api.vvhan.com/api/hotlist/wbHot');
+      const data2 = await res2.json();
+      if (!data2.success || !data2.data) throw new Error('fallback fail');
+      container.innerHTML = '<ul class="hot-list">' + data2.data.slice(0, 15).map((item, i) => `
+        <li class="hot-item" onclick="window.open('${escAttr(item.url || 'https://s.weibo.com')}','_blank')">
+          <span class="hot-rank">${i + 1}</span>
+          <span class="hot-title">${escHtml(item.title || item.name || '')}</span>
+          <span class="hot-heat">${item.hot || ''}</span>
+        </li>
+      `).join('') + '</ul>';
+    } catch (e2) {
+      container.innerHTML = '<div class="hot-loading">热搜加载失败，请稍后刷新</div>';
+    }
+  }
+}
+function escAttr(s) { return String(s).replace(/'/g, "\\'").replace(/"/g, '&quot;'); }
+loadHotSearch();
 
 // ===== Mood Modal =====
 const moodMessages = {
