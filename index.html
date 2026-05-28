@@ -747,7 +747,7 @@
 
     <!-- Hot Search -->
     <div class="card">
-      <div class="card-label"><span class="dot"></span>抖音热搜</div>
+      <div class="card-label"><span class="dot"></span>微博热搜</div>
       <div id="hot-content"><div class="hot-loading">加载中...</div></div>
     </div>
   </div>
@@ -1009,38 +1009,21 @@ loadDailyImage();
 // ===== Hot Search =====
 async function loadHotSearch() {
   const container = document.getElementById('hot-content');
-
-  async function tryFetch(url) {
-    const res = await fetch(url);
-    if (!res.ok) throw new Error('http ' + res.status);
-    return res.json();
+  try {
+    const res = await fetch('hotlist.json?t=' + Date.now());
+    if (!res.ok) throw new Error('no data');
+    const list = await res.json();
+    if (!list.length) throw new Error('empty');
+    container.innerHTML = '<ul class="hot-list">' + list.map((item, i) => `
+      <li class="hot-item" onclick="window.open('${escAttr(item.url || '#')}','_blank')">
+        <span class="hot-rank">${i + 1}</span>
+        <span class="hot-title">${escHtml(item.title || '')}</span>
+        <span class="hot-heat">${item.hot || ''}</span>
+      </li>
+    `).join('') + '</ul>';
+  } catch (e) {
+    container.innerHTML = '<div class="hot-loading">热搜加载失败，请稍后刷新</div>';
   }
-
-  // Try multiple Douyin hot search APIs with fallbacks
-  const apis = [
-    { url: 'https://api.vvhan.com/api/hotlist/douyinHot', parse: d => d.data },
-    { url: 'https://tenapi.cn/v2/douyinhot', parse: d => d.data },
-  ];
-
-  for (const api of apis) {
-    try {
-      const data = await tryFetch(api.url);
-      const list = api.parse(data);
-      if (!list || !list.length) continue;
-      container.innerHTML = '<ul class="hot-list">' + list.slice(0, 15).map((item, i) => {
-        const title = item.title || item.name || item.word || '';
-        const hot = item.hot || item.hot_value || item.index || '';
-        const url = item.url || item.scheme || 'https://www.douyin.com';
-        return `<li class="hot-item" onclick="window.open('${escAttr(url)}','_blank')">
-          <span class="hot-rank">${i + 1}</span>
-          <span class="hot-title">${escHtml(title)}</span>
-          <span class="hot-heat">${hot}</span>
-        </li>`;
-      }).join('') + '</ul>';
-      return;
-    } catch (e) { continue; }
-  }
-  container.innerHTML = '<div class="hot-loading">热搜加载失败，请稍后刷新</div>';
 }
 function escAttr(s) { return String(s).replace(/'/g, "\\'").replace(/"/g, '&quot;'); }
 loadHotSearch();
