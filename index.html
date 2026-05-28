@@ -721,18 +721,18 @@
     <div class="card">
       <div class="card-label"><span class="dot"></span>快捷搜索</div>
       <div class="search-box">
-        <input type="text" id="search-input" placeholder="搜索一下..." onkeydown="if(event.key==='Enter')doSearch('google')">
-        <button onclick="doSearch('google')">搜索</button>
+        <input type="text" id="search-input" placeholder="搜索一下..." onkeydown="if(event.key==='Enter')doSearch('baidu')">
+        <button onclick="doSearch('baidu')">搜索</button>
       </div>
       <div class="search-shortcuts">
-        <a href="https://www.google.com" target="_blank"><div class="sc-icon">🔍</div>Google</a>
-        <a href="https://www.bing.com" target="_blank"><div class="sc-icon">🌐</div>Bing</a>
         <a href="https://www.baidu.com" target="_blank"><div class="sc-icon">📷</div>百度</a>
+        <a href="https://www.bing.com" target="_blank"><div class="sc-icon">🌐</div>Bing</a>
         <a href="https://www.zhihu.com" target="_blank"><div class="sc-icon">💡</div>知乎</a>
         <a href="https://www.bilibili.com" target="_blank"><div class="sc-icon">📺</div>B站</a>
         <a href="https://github.com" target="_blank"><div class="sc-icon">🐱</div>GitHub</a>
         <a href="https://www.youtube.com" target="_blank"><div class="sc-icon">▶️</div>YouTube</a>
         <a href="https://twitter.com" target="_blank"><div class="sc-icon">🐦</div>Twitter</a>
+        <a href="https://www.google.com" target="_blank"><div class="sc-icon">🔍</div>Google</a>
       </div>
     </div>
 
@@ -747,7 +747,7 @@
 
     <!-- Hot Search -->
     <div class="card">
-      <div class="card-label"><span class="dot"></span>微博热搜</div>
+      <div class="card-label"><span class="dot"></span>抖音热搜</div>
       <div id="hot-content"><div class="hot-loading">加载中...</div></div>
     </div>
   </div>
@@ -1009,35 +1009,38 @@ loadDailyImage();
 // ===== Hot Search =====
 async function loadHotSearch() {
   const container = document.getElementById('hot-content');
-  try {
-    // Use a CORS proxy to fetch Weibo hot search
-    const res = await fetch('https://tenapi.cn/v2/weibohot');
-    const data = await res.json();
-    if (data.code !== 200 || !data.data) throw new Error('api fail');
-    container.innerHTML = '<ul class="hot-list">' + data.data.slice(0, 15).map((item, i) => `
-      <li class="hot-item" onclick="window.open('${escAttr(item.url || 'https://s.weibo.com')}','_blank')">
-        <span class="hot-rank">${i + 1}</span>
-        <span class="hot-title">${escHtml(item.name || item.title || '')}</span>
-        <span class="hot-heat">${item.hot || ''}</span>
-      </li>
-    `).join('') + '</ul>';
-  } catch (e) {
-    // Fallback: try another API
-    try {
-      const res2 = await fetch('https://api.vvhan.com/api/hotlist/wbHot');
-      const data2 = await res2.json();
-      if (!data2.success || !data2.data) throw new Error('fallback fail');
-      container.innerHTML = '<ul class="hot-list">' + data2.data.slice(0, 15).map((item, i) => `
-        <li class="hot-item" onclick="window.open('${escAttr(item.url || 'https://s.weibo.com')}','_blank')">
-          <span class="hot-rank">${i + 1}</span>
-          <span class="hot-title">${escHtml(item.title || item.name || '')}</span>
-          <span class="hot-heat">${item.hot || ''}</span>
-        </li>
-      `).join('') + '</ul>';
-    } catch (e2) {
-      container.innerHTML = '<div class="hot-loading">热搜加载失败，请稍后刷新</div>';
-    }
+
+  async function tryFetch(url) {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('http ' + res.status);
+    return res.json();
   }
+
+  // Try multiple Douyin hot search APIs with fallbacks
+  const apis = [
+    { url: 'https://api.vvhan.com/api/hotlist/douyinHot', parse: d => d.data },
+    { url: 'https://tenapi.cn/v2/douyinhot', parse: d => d.data },
+  ];
+
+  for (const api of apis) {
+    try {
+      const data = await tryFetch(api.url);
+      const list = api.parse(data);
+      if (!list || !list.length) continue;
+      container.innerHTML = '<ul class="hot-list">' + list.slice(0, 15).map((item, i) => {
+        const title = item.title || item.name || item.word || '';
+        const hot = item.hot || item.hot_value || item.index || '';
+        const url = item.url || item.scheme || 'https://www.douyin.com';
+        return `<li class="hot-item" onclick="window.open('${escAttr(url)}','_blank')">
+          <span class="hot-rank">${i + 1}</span>
+          <span class="hot-title">${escHtml(title)}</span>
+          <span class="hot-heat">${hot}</span>
+        </li>`;
+      }).join('') + '</ul>';
+      return;
+    } catch (e) { continue; }
+  }
+  container.innerHTML = '<div class="hot-loading">热搜加载失败，请稍后刷新</div>';
 }
 function escAttr(s) { return String(s).replace(/'/g, "\\'").replace(/"/g, '&quot;'); }
 loadHotSearch();
