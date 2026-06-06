@@ -657,6 +657,209 @@
     .grid { grid-template-columns: 1fr; }
     .card[data-tab] { display: none; }
     .card[data-tab].tab-active { display: block; }
+    .chat-widget { bottom: 80px; }
+  }
+
+  /* ---- AI Chat ---- */
+  .chat-fab {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), #e040a0);
+    border: none;
+    color: #fff;
+    font-size: 1.5rem;
+    cursor: pointer;
+    box-shadow: 0 4px 20px var(--accent-glow);
+    z-index: 600;
+    transition: transform 0.3s, box-shadow 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .chat-fab:hover { transform: scale(1.1); box-shadow: 0 6px 30px var(--accent-glow); }
+
+  .chat-panel {
+    position: fixed;
+    bottom: 90px;
+    right: 20px;
+    width: 380px;
+    max-width: calc(100vw - 40px);
+    height: 520px;
+    max-height: calc(100vh - 140px);
+    background: rgba(20, 18, 50, 0.95);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    z-index: 650;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+    pointer-events: none;
+    transition: all 0.35s;
+    overflow: hidden;
+  }
+  .chat-panel.open {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: all;
+  }
+
+  .chat-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--glass-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .chat-header-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .chat-header-dot {
+    width: 8px; height: 8px;
+    background: #4ade80;
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  .chat-close {
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 4px;
+  }
+
+  .chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .chat-messages::-webkit-scrollbar { width: 4px; }
+  .chat-messages::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
+
+  .chat-msg {
+    max-width: 85%;
+    padding: 10px 14px;
+    border-radius: 14px;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    word-break: break-word;
+  }
+  .chat-msg.user {
+    align-self: flex-end;
+    background: var(--accent);
+    color: #fff;
+    border-bottom-right-radius: 4px;
+  }
+  .chat-msg.bot {
+    align-self: flex-start;
+    background: rgba(255,255,255,0.08);
+    color: var(--text);
+    border-bottom-left-radius: 4px;
+  }
+  .chat-msg img {
+    max-width: 100%;
+    border-radius: 8px;
+    margin-top: 8px;
+  }
+  .chat-msg.bot.error {
+    color: #f87171;
+    background: rgba(248,113,113,0.1);
+  }
+  .chat-typing {
+    align-self: flex-start;
+    padding: 10px 14px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 14px;
+    font-size: 0.82rem;
+    color: var(--text-dim);
+    display: none;
+  }
+  .chat-typing.show { display: block; }
+
+  .chat-input-area {
+    padding: 12px 16px;
+    border-top: 1px solid var(--glass-border);
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .chat-preview {
+    display: none;
+    padding: 4px 16px;
+    border-top: 1px solid var(--glass-border);
+    flex-shrink: 0;
+  }
+  .chat-preview.show { display: flex; align-items: center; gap: 8px; }
+  .chat-preview img { width: 40px; height: 40px; object-fit: cover; border-radius: 8px; }
+  .chat-preview .chat-preview-del {
+    color: var(--text-dim);
+    cursor: pointer;
+    font-size: 0.8rem;
+  }
+
+  .chat-input {
+    flex: 1;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 10px 14px;
+    color: var(--text);
+    font-size: 0.85rem;
+    outline: none;
+    resize: none;
+    max-height: 80px;
+    font-family: inherit;
+  }
+  .chat-input::placeholder { color: var(--text-dim); }
+  .chat-input:focus { border-color: var(--accent); }
+
+  .chat-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .chat-btn-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    border: 1px solid var(--glass-border);
+    background: rgba(255,255,255,0.06);
+    color: var(--text-dim);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    transition: all 0.2s;
+  }
+  .chat-btn-icon:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+  @media (max-width: 420px) {
+    .chat-panel {
+      right: 0;
+      bottom: 0;
+      width: 100vw;
+      height: 100vh;
+      max-height: 100vh;
+      border-radius: 0;
+    }
+    .chat-fab { bottom: 80px; }
   }
 </style>
 </head>
@@ -799,6 +1002,31 @@
       <div class="card-label"><span class="dot"></span>微博热搜</div>
       <div id="hot-content"><div class="hot-loading">加载中...</div></div>
     </div>
+  </div>
+</div>
+
+<!-- AI Chat -->
+<button class="chat-fab" id="chat-fab" onclick="toggleChat()">🤖</button>
+<div class="chat-panel" id="chat-panel">
+  <div class="chat-header">
+    <div class="chat-header-title"><span class="chat-header-dot"></span>灰太羊羊 AI 助手</div>
+    <button class="chat-close" onclick="toggleChat()">✕</button>
+  </div>
+  <div class="chat-messages" id="chat-messages">
+    <div class="chat-msg bot">你好！我是灰太羊羊 AI 助手，有什么可以帮你的？你也可以发图片让我分析哦 📷</div>
+  </div>
+  <div class="chat-typing" id="chat-typing">正在思考中...</div>
+  <div class="chat-preview" id="chat-preview">
+    <img id="chat-preview-img">
+    <span class="chat-preview-del" onclick="clearImage()">✕ 移除</span>
+  </div>
+  <div class="chat-input-area">
+    <textarea class="chat-input" id="chat-input" rows="1" placeholder="输入消息..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat()}"></textarea>
+    <div class="chat-actions">
+      <button class="chat-btn-icon" onclick="document.getElementById('chat-file').click()" title="上传图片">📷</button>
+      <button class="chat-btn-icon" onclick="sendChat()" title="发送">➤</button>
+    </div>
+    <input type="file" id="chat-file" accept="image/*" style="display:none" onchange="handleImageUpload(event)">
   </div>
 </div>
 
@@ -1156,6 +1384,99 @@ function initTabs() {
   switchTab('home');
 }
 initTabs();
+
+// ===== AI Chat =====
+let chatHistory = [];
+let chatImage = null;
+
+function toggleChat() {
+  const panel = document.getElementById('chat-panel');
+  const fab = document.getElementById('chat-fab');
+  panel.classList.toggle('open');
+  fab.style.display = panel.classList.contains('open') ? 'none' : 'flex';
+  if (panel.classList.contains('open')) {
+    document.getElementById('chat-input').focus();
+  }
+}
+
+function handleImageUpload(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    chatImage = ev.target.result;
+    document.getElementById('chat-preview-img').src = chatImage;
+    document.getElementById('chat-preview').classList.add('show');
+  };
+  reader.readAsDataURL(file);
+  e.target.value = '';
+}
+
+function clearImage() {
+  chatImage = null;
+  document.getElementById('chat-preview').classList.remove('show');
+}
+
+function addMsg(role, text, imageSrc) {
+  const div = document.createElement('div');
+  div.className = 'chat-msg ' + role;
+  div.textContent = text;
+  if (imageSrc) {
+    const img = document.createElement('img');
+    img.src = imageSrc;
+    div.appendChild(img);
+  }
+  document.getElementById('chat-messages').appendChild(div);
+  document.getElementById('chat-messages').scrollTop = document.getElementById('chat-messages').scrollHeight;
+}
+
+async function sendChat() {
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if (!text && !chatImage) return;
+
+  const userMsg = text || (chatImage ? '[发送了一张图片]' : '');
+  addMsg('user', userMsg, chatImage);
+
+  chatHistory.push({ role: 'user', content: userMsg });
+
+  input.value = '';
+  input.style.height = 'auto';
+  const typing = document.getElementById('chat-typing');
+  typing.classList.add('show');
+
+  try {
+    const body = { messages: chatHistory };
+    if (chatImage) body.image = chatImage;
+
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    const data = await res.json();
+
+    typing.classList.remove('show');
+
+    if (data.reply) {
+      addMsg('bot', data.reply);
+      chatHistory.push({ role: 'assistant', content: data.reply });
+    } else {
+      addMsg('bot', '抱歉，出了点问题：' + (data.error || '未知错误'));
+    }
+  } catch (e) {
+    typing.classList.remove('show');
+    addMsg('bot', '网络错误，请稍后重试');
+  }
+
+  clearImage();
+}
+
+// Auto-resize textarea
+document.getElementById('chat-input').addEventListener('input', function() {
+  this.style.height = 'auto';
+  this.style.height = Math.min(this.scrollHeight, 80) + 'px';
+});
 </script>
 </body>
 </body>
