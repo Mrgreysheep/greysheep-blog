@@ -331,9 +331,10 @@
     align-items: center;
     justify-content: center;
     opacity: 0;
+    pointer-events: none;
     transition: opacity 0.4s;
   }
-  .mood-overlay.show { opacity: 1; }
+  .mood-overlay.show { opacity: 1; pointer-events: all; }
   .mood-overlay.hidden { pointer-events: none; opacity: 0; }
 
   .mood-box {
@@ -1352,7 +1353,9 @@ function closeMood() {
 }
 
 // Show modal only on first visit
-if (!localStorage.getItem('mood_shown')) {
+if (localStorage.getItem('mood_shown')) {
+  document.getElementById('mood-overlay').classList.add('hidden');
+} else {
   setTimeout(() => document.getElementById('mood-overlay').classList.add('show'), 500);
 }
 document.getElementById('mood-overlay').addEventListener('click', (e) => {
