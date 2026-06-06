@@ -1071,32 +1071,47 @@ const WMO = {
 
 async function fetchWeather() {
   try {
-    // Try browser geolocation first for accurate local weather
-    let params = '';
+    let lat, lon, city;
+
+    // Try browser geolocation first for most accurate weather
     try {
       const pos = await new Promise((resolve, reject) => {
         navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 5000, enableHighAccuracy: false });
       });
-      const { latitude, longitude } = pos.coords;
-      // Reverse geocode city name via Open-Meteo
-      const geoUrl = `https://geocoding-api.open-meteo.com/v1/search?latitude=${latitude}&longitude=${longitude}&count=1&language=zh`;
+      lat = pos.coords.latitude;
+      lon = pos.coords.longitude;
+      const geoUrl = `https://geocoding-api.open-meteo.com/v1/search?latitude=${lat}&longitude=${lon}&count=1&language=zh`;
       const geoData = await fetch(geoUrl).then(r => r.json());
-      const cityName = geoData.results?.[0]?.name || '';
-      params = `?lat=${latitude}&lon=${longitude}&city=${encodeURIComponent(cityName)}`;
+      city = geoData.results?.[0]?.name || '';
     } catch (e) {
-      // Geolocation denied or unavailable, server will use its IP location
-      console.log('Browser geolocation unavailable, using server IP location');
+      // Geolocation denied — use client-side IP geolocation (user's IP, not server's)
+      try {
+        const geo = await fetch('https://ip-api.com/json/?lang=zh-CN').then(r => r.json());
+        if (geo.status === 'success') {
+          lat = geo.lat;
+          lon = geo.lon;
+          city = geo.city || '';
+        }
+      } catch (e2) {
+        console.log('IP geolocation also failed');
+      }
     }
 
-    const data = await fetch('/api/weather' + params).then(r => r.json());
+    if (!lat || !lon) {
+      document.getElementById('weather-desc').textContent = '天气获取失败，请稍后刷新';
+      return;
+    }
+
+    const url = `/api/weather?lat=${lat}&lon=${lon}&city=${encodeURIComponent(city || '')}`;
+    const data = await fetch(url).then(r => r.json());
     if (data.error) throw new Error(data.error);
     const c = data.current;
-    const city = data.city;
+    const displayCity = data.city || city;
 
     const [icon, desc] = WMO[c.weather_code] || ['🌡️', '未知'];
     document.getElementById('weather-icon').textContent = icon;
     document.getElementById('weather-temp').textContent = `${Math.round(c.temperature_2m)}°`;
-    document.getElementById('weather-desc').textContent = `${city || ''} · ${desc}`;
+    document.getElementById('weather-desc').textContent = `${displayCity || ''} · ${desc}`;
     document.getElementById('weather-wind').textContent = `🌬️ 风速 ${c.wind_speed_10m} km/h`;
     document.getElementById('weather-humidity').textContent = `💧 湿度 ${c.relative_humidity_2m}%`;
     document.getElementById('weather-feels').textContent = `🌡️ 体感 ${Math.round(c.apparent_temperature)}°`;

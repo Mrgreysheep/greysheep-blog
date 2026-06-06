@@ -173,7 +173,6 @@
   .typing-indicator {
     padding: 8px 24px;
     display: none;
-    margin-top: 4px;
   }
   .typing-indicator.show { display: flex; }
   .typing-dots {
@@ -368,9 +367,10 @@
       <div class="quick-prompt" onclick="quickSend('今天心情不好，聊聊天')">聊聊天</div>
     </div>
   </div>
-  <div class="typing-indicator" id="typing">
-    <div class="typing-dots"><span></span><span></span><span></span></div>
-  </div>
+</div>
+
+<div class="typing-indicator" id="typing">
+  <div class="typing-dots"><span></span><span></span><span></span></div>
 </div>
 
 <div class="input-area">
@@ -502,7 +502,10 @@ async function sendChat() {
   input.style.height = 'auto';
   clearImage();
 
+  // Move typing indicator into messages container, after the last message
   const typing = document.getElementById('typing');
+  const messages = document.getElementById('messages');
+  messages.appendChild(typing);
   typing.classList.add('show');
   scrollBottom();
 
@@ -539,6 +542,9 @@ function newChat() {
   chatHistory = [];
   chatImage = null;
   clearImage();
+  // Move typing indicator back to its original position
+  const typing = document.getElementById('typing');
+  if (typing) typing.remove();
   document.getElementById('messages').innerHTML = `
     <div class="welcome" id="welcome">
       <div class="welcome-icon">🤖</div>
@@ -550,10 +556,14 @@ function newChat() {
         <div class="quick-prompt" onclick="quickSend('帮我优化这段代码的性能')">优化代码</div>
         <div class="quick-prompt" onclick="quickSend('今天心情不好，聊聊天')">聊聊天</div>
       </div>
-    </div>
-    <div class="typing-indicator" id="typing">
-      <div class="typing-dots"><span></span><span></span><span></span></div>
     </div>`;
+  // Re-create typing indicator in its original position
+  const inputArea = document.querySelector('.input-area');
+  const newTyping = document.createElement('div');
+  newTyping.className = 'typing-indicator';
+  newTyping.id = 'typing';
+  newTyping.innerHTML = '<div class="typing-dots"><span></span><span></span><span></span></div>';
+  inputArea.parentNode.insertBefore(newTyping, inputArea);
 }
 
 // Auto-resize textarea
