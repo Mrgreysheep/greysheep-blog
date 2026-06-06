@@ -657,7 +657,7 @@
     .grid { grid-template-columns: 1fr; }
     .card[data-tab] { display: none; }
     .card[data-tab].tab-active { display: block; }
-    .chat-widget { bottom: 80px; }
+    .ai-desktop-only { display: none !important; }
   }
 
   /* ---- AI Chat ---- */
@@ -897,12 +897,12 @@
 
   <div class="grid">
     <!-- AI Assistant -->
-    <div class="card" data-tab="home" style="cursor:pointer" onclick="window.location='/chat.html'">
+    <div class="card ai-desktop-only" data-tab="home" style="cursor:pointer" onclick="window.location='/chat.html'">
       <div class="card-label"><span class="dot"></span>AI 助手</div>
       <div style="display:flex;align-items:center;gap:14px;padding:8px 0">
         <div style="width:50px;height:50px;border-radius:14px;background:linear-gradient(135deg,#7c6ef0,#e040a0);display:flex;align-items:center;justify-content:center;font-size:1.6rem;flex-shrink:0">🤖</div>
         <div>
-          <div style="font-weight:600;font-size:0.95rem;margin-bottom:4px">灰太羊羊 AI</div>
+          <div style="font-weight:600;font-size:0.95rem;margin-bottom:4px">灰太羊羊君</div>
           <div style="font-size:0.78rem;color:var(--text-dim)">聊天、写代码、分析图片，Powered by MiMo v2.5</div>
         </div>
       </div>
@@ -1024,6 +1024,7 @@
     <button class="tab-item" data-tab="home"><span class="tab-icon">🏠</span>常用</button>
     <button class="tab-item" data-tab="discover"><span class="tab-icon">🔍</span>发现</button>
     <button class="tab-item" data-tab="tools"><span class="tab-icon">🧰</span>工具</button>
+    <button class="tab-item" onclick="window.location='/chat.html'"><span class="tab-icon">🤖</span>AI</button>
   </div>
 </div>
 
@@ -1342,6 +1343,7 @@ function answerMood(mood) {
   document.getElementById('mood-emoji').textContent = emoji;
   document.getElementById('mood-text').textContent = msg;
   document.getElementById('mood-result').classList.add('show');
+  localStorage.setItem('mood_shown', '1');
 }
 
 function closeMood() {
@@ -1349,12 +1351,16 @@ function closeMood() {
   setTimeout(() => document.getElementById('mood-overlay').classList.add('hidden'), 400);
 }
 
+// Show modal only on first visit
+if (!localStorage.getItem('mood_shown')) {
+  setTimeout(() => document.getElementById('mood-overlay').classList.add('show'), 500);
+}
 document.getElementById('mood-overlay').addEventListener('click', (e) => {
-  if (e.target === e.currentTarget && document.getElementById('mood-result').classList.contains('show')) closeMood();
+  if (e.target === e.currentTarget && document.getElementById('mood-result').classList.contains('show')) {
+    localStorage.setItem('mood_shown', '1');
+    closeMood();
+  }
 });
-
-// Show modal on load
-setTimeout(() => document.getElementById('mood-overlay').classList.add('show'), 500);
 
 // ===== Mobile Tab Bar =====
 function initTabs() {

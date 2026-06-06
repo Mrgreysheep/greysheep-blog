@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>灰太羊羊 AI 助手</title>
+<title>灰太羊羊君 助手</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -341,8 +341,8 @@
 <div class="header">
   <a href="/" class="back-btn">←</a>
   <div class="header-info">
-    <div class="header-title"><span class="dot"></span>灰太羊羊 AI</div>
-    <div class="header-sub">Powered by MiMo v2.5</div>
+    <div class="header-title"><span class="dot"></span>灰太羊羊君</div>
+    <div class="header-sub">Powered by MiMo v2.5 · 灰太羊羊君</div>
   </div>
   <button class="new-chat-btn" onclick="newChat()">新建对话</button>
 </div>
@@ -350,7 +350,7 @@
 <div class="messages" id="messages">
   <div class="welcome" id="welcome">
     <div class="welcome-icon">🤖</div>
-    <h2>你好，我是灰太羊羊 AI</h2>
+    <h2>你好，我是灰太羊羊君</h2>
     <p>有什么我可以帮你的？你也可以发送图片让我分析。</p>
     <div class="quick-prompts">
       <div class="quick-prompt" onclick="quickSend('帮我写一段 Python 爬虫代码')">写爬虫代码</div>
@@ -421,7 +421,7 @@ function addMsg(role, content, imageSrc) {
 
   const roleLabel = document.createElement('div');
   roleLabel.className = 'msg-role';
-  roleLabel.textContent = role === 'user' ? '你' : '灰太羊羊 AI';
+  roleLabel.textContent = role === 'user' ? '你' : '灰太羊羊君';
 
   const bubble = document.createElement('div');
   bubble.className = 'msg-bubble';
@@ -533,7 +533,7 @@ function newChat() {
   document.getElementById('messages').innerHTML = `
     <div class="welcome" id="welcome">
       <div class="welcome-icon">🤖</div>
-      <h2>你好，我是灰太羊羊 AI</h2>
+      <h2>你好，我是灰太羊羊君</h2>
       <p>有什么我可以帮你的？你也可以发送图片让我分析。</p>
       <div class="quick-prompts">
         <div class="quick-prompt" onclick="quickSend('帮我写一段 Python 爬虫代码')">写爬虫代码</div>
