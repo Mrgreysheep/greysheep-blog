@@ -896,6 +896,18 @@
   </header>
 
   <div class="grid">
+    <!-- AI Assistant -->
+    <div class="card" data-tab="home" style="cursor:pointer" onclick="window.location='/chat.html'">
+      <div class="card-label"><span class="dot"></span>AI 助手</div>
+      <div style="display:flex;align-items:center;gap:14px;padding:8px 0">
+        <div style="width:50px;height:50px;border-radius:14px;background:linear-gradient(135deg,#7c6ef0,#e040a0);display:flex;align-items:center;justify-content:center;font-size:1.6rem;flex-shrink:0">🤖</div>
+        <div>
+          <div style="font-weight:600;font-size:0.95rem;margin-bottom:4px">灰太羊羊 AI</div>
+          <div style="font-size:0.78rem;color:var(--text-dim)">聊天、写代码、分析图片，Powered by MiMo v2.5</div>
+        </div>
+      </div>
+    </div>
+
     <!-- Clock -->
     <div class="card" id="clock-card" data-tab="home">
       <div class="card-label"><span class="dot"></span>时钟</div>
@@ -1005,30 +1017,7 @@
   </div>
 </div>
 
-<!-- AI Chat -->
-<button class="chat-fab" id="chat-fab" onclick="toggleChat()">🤖</button>
-<div class="chat-panel" id="chat-panel">
-  <div class="chat-header">
-    <div class="chat-header-title"><span class="chat-header-dot"></span>灰太羊羊 AI 助手</div>
-    <button class="chat-close" onclick="toggleChat()">✕</button>
-  </div>
-  <div class="chat-messages" id="chat-messages">
-    <div class="chat-msg bot">你好！我是灰太羊羊 AI 助手，有什么可以帮你的？你也可以发图片让我分析哦 📷</div>
-  </div>
-  <div class="chat-typing" id="chat-typing">正在思考中...</div>
-  <div class="chat-preview" id="chat-preview">
-    <img id="chat-preview-img">
-    <span class="chat-preview-del" onclick="clearImage()">✕ 移除</span>
-  </div>
-  <div class="chat-input-area">
-    <textarea class="chat-input" id="chat-input" rows="1" placeholder="输入消息..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat()}"></textarea>
-    <div class="chat-actions">
-      <button class="chat-btn-icon" onclick="document.getElementById('chat-file').click()" title="上传图片">📷</button>
-      <button class="chat-btn-icon" onclick="sendChat()" title="发送">➤</button>
-    </div>
-    <input type="file" id="chat-file" accept="image/*" style="display:none" onchange="handleImageUpload(event)">
-  </div>
-</div>
+<!-- AI Assistant Link -->
 
 <div class="tab-bar">
   <div class="tab-bar-inner">
