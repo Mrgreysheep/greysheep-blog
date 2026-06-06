@@ -495,7 +495,8 @@ async function sendChat() {
   document.getElementById('send-btn').disabled = true;
 
   const userMsg = text || (chatImage ? '[发送了一张图片]' : '');
-  addMsg('user', userMsg, chatImage);
+  const imgToSend = chatImage;
+  addMsg('user', userMsg, imgToSend);
   chatHistory.push({ role: 'user', content: userMsg });
 
   input.value = '';
@@ -508,7 +509,7 @@ async function sendChat() {
 
   try {
     const body = { messages: chatHistory };
-    if (chatImage) body.image = chatImage;
+    if (imgToSend) body.image = imgToSend;
 
     const res = await fetch('/api/chat', {
       method: 'POST',
