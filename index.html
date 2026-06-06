@@ -1344,7 +1344,7 @@ function answerMood(mood) {
   document.getElementById('mood-emoji').textContent = emoji;
   document.getElementById('mood-text').textContent = msg;
   document.getElementById('mood-result').classList.add('show');
-  localStorage.setItem('mood_shown', '1');
+  localStorage.setItem('mood_date', new Date().toDateString());
 }
 
 function closeMood() {
@@ -1352,15 +1352,16 @@ function closeMood() {
   setTimeout(() => document.getElementById('mood-overlay').classList.add('hidden'), 400);
 }
 
-// Show modal only on first visit
-if (localStorage.getItem('mood_shown')) {
+// Show modal once per day (resets at midnight)
+const today = new Date().toDateString();
+if (localStorage.getItem('mood_date') === today) {
   document.getElementById('mood-overlay').classList.add('hidden');
 } else {
   setTimeout(() => document.getElementById('mood-overlay').classList.add('show'), 500);
 }
 document.getElementById('mood-overlay').addEventListener('click', (e) => {
   if (e.target === e.currentTarget && document.getElementById('mood-result').classList.contains('show')) {
-    localStorage.setItem('mood_shown', '1');
+    localStorage.setItem('mood_date', today);
     closeMood();
   }
 });
