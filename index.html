@@ -1071,8 +1071,24 @@ const WMO = {
 
 async function fetchWeather() {
   try {
-    // Use server-side proxy to avoid CORS / GFW issues
-    const data = await fetch('/api/weather').then(r => r.json());
+    // Try browser geolocation first for accurate local weather
+    let params = '';
+    try {
+      const pos = await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 5000, enableHighAccuracy: false });
+      });
+      const { latitude, longitude } = pos.coords;
+      // Reverse geocode city name via Open-Meteo
+      const geoUrl = `https://geocoding-api.open-meteo.com/v1/search?latitude=${latitude}&longitude=${longitude}&count=1&language=zh`;
+      const geoData = await fetch(geoUrl).then(r => r.json());
+      const cityName = geoData.results?.[0]?.name || '';
+      params = `?lat=${latitude}&lon=${longitude}&city=${encodeURIComponent(cityName)}`;
+    } catch (e) {
+      // Geolocation denied or unavailable, server will use its IP location
+      console.log('Browser geolocation unavailable, using server IP location');
+    }
+
+    const data = await fetch('/api/weather' + params).then(r => r.json());
     if (data.error) throw new Error(data.error);
     const c = data.current;
     const city = data.city;
