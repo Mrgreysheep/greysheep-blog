@@ -1072,9 +1072,10 @@ const WMO = {
 async function fetchWeather() {
   try {
     // Use IP geolocation — no browser permission needed
-    const geo = await fetch('https://ipapi.co/json/').then(r => r.json());
-    if (!geo.latitude) throw new Error('geo fail');
-    const { latitude: lat, longitude: lon, city } = geo;
+    const geo = await fetch('https://ipinfo.io/json').then(r => r.json());
+    if (!geo.loc) throw new Error('geo fail');
+    const [lat, lon] = geo.loc.split(',').map(Number);
+    const city = geo.city || '';
 
     const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min&timezone=auto`;
     const res = await fetch(url);
